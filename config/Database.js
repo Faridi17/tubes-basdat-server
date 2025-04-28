@@ -4,7 +4,7 @@ const pool = new pg.Pool({
     host: 'localhost',
     user: 'postgres',
     password: 'a',
-    database: 'tubes',
+    database: 'kereta',
     port: 5432,
 });
 

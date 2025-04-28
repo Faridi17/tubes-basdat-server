@@ -1,23 +1,23 @@
 import pool from '../config/Database.js';
 
 export const createOrder = async (req, res) => {
-    const { payment_method, id_user, id_ticket } = req.body;
+    const { payment_method, id_user, id_ticket, id_train } = req.body;
 
     try {
         const query = `
-            INSERT INTO orders (payment_method, id_user, id_ticket)
-            VALUES ($1, $2, $3)
+            INSERT INTO orders (payment_method, id_user, id_ticket, id_train)
+            VALUES ($1, $2, $3, $4)
         `;
-        await pool.query(query, [payment_method, id_user, id_ticket]);
+        await pool.query(query, [payment_method, id_user, id_ticket, id_train]);
 
         res.status(201).json({ message: 'Order berhasil' });
     } catch (error) {
         try {
             const query = `
-                INSERT INTO orders (payment_method, status_order, id_user, id_ticket)
-                VALUES ($1, 'failed', $2, $3)
+                INSERT INTO orders (payment_method, status_order, id_user, id_ticket, id_train)
+                VALUES ($1, 'failed', $2, $3, $4)
             `;
-            await pool.query(query, [payment_method, id_user, id_ticket]);
+            await pool.query(query, [payment_method, id_user, id_ticket, id_train]);
         } catch (innerError) {
             console.error('Error logging failed order:', innerError.message);
         }
