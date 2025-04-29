@@ -1,23 +1,25 @@
+import { v4 as uuidv4 } from 'uuid';
 import pool from '../config/Database.js';
 
 export const createOrder = async (req, res) => {
     const { payment_method, id_user, id_ticket, id_train } = req.body;
+    const id_order = uuidv4()
 
     try {
         const query = `
-            INSERT INTO orders (payment_method, id_user, id_ticket, id_train)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO orders (id_order, payment_method, id_user, id_ticket, id_train)
+            VALUES ($1, $2, $3, $4, $5)
         `;
-        await pool.query(query, [payment_method, id_user, id_ticket, id_train]);
+        await pool.query(query, [id_order, payment_method, id_user, id_ticket, id_train]);
 
         res.status(201).json({ message: 'Order berhasil' });
     } catch (error) {
         try {
             const query = `
-                INSERT INTO orders (payment_method, status_order, id_user, id_ticket, id_train)
-                VALUES ($1, 'failed', $2, $3, $4)
+                INSERT INTO orders (id_order, payment_method, status_order, id_user, id_ticket, id_train)
+                VALUES ($1, $2, 'failed', $3, $4, $5)
             `;
-            await pool.query(query, [payment_method, id_user, id_ticket, id_train]);
+            await pool.query(query, [id_order, payment_method, id_user, id_ticket, id_train]);
         } catch (innerError) {
             console.error('Error logging failed order:', innerError.message);
         }
@@ -40,7 +42,7 @@ export const getOrderByUser = async (req, res) => {
     try {
         const { userId } = req.params;
         const query = `
-            SELECT 
+            SELECT  
                 o.id_order, 
                 TO_CHAR(o.date_order, 'HH24:MI DD Mon YYYY') AS order_date, 
                 o.payment_method, 
