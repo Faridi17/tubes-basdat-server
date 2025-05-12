@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import pool from '../config/Database.js';
 
@@ -6,15 +7,16 @@ import pool from '../config/Database.js';
 export const register = async (req, res) => {
     try {
         const { email, password, firstname, lastname, age, gender, address } = req.body;
+        const id_user = uuidv4()
 
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
 
         const query = `
-            INSERT INTO users (email, password, firstname, lastname, age, gender, address)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO users (id_user, email, password, firstname, lastname, age, gender, address)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         `;
-        const values = [email, passwordHash, firstname, lastname, age, gender, address];
+        const values = [id_user, email, passwordHash, firstname, lastname, age, gender, address];
 
         await pool.query(query, values);
 
