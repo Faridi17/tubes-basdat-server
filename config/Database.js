@@ -1,7 +1,7 @@
 import pg from 'pg';
 
 const pool = new pg.Pool({
-    host: 'localhost',
+    host: '192.168.43.3',
     user: 'postgres',
     password: 'a',
     database: 'kereta',
